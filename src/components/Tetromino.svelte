@@ -9,71 +9,72 @@
     T: {
       key: "T",
       color: "purple",
+
       blocks: [
+        { x: -1, y: 0 },
         { x: 0, y: 0 },
+        { x: 1, y: 0 },
         { x: 0, y: 1 },
-        { x: 0, y: 2 },
-        { x: 1, y: 1 },
       ],
     },
     L: {
       key: "L",
       color: "red",
       blocks: [
+        { x: -1, y: 0 },
         { x: 0, y: 0 },
-        { x: 0, y: 1 },
-        { x: 0, y: 2 },
-        { x: 1, y: 2 },
+        { x: 1, y: 0 },
+        { x: 1, y: -1 },
       ],
     },
     J: {
       key: "J",
       color: "blue",
       blocks: [
+        { x: -1, y: -1 },
+        { x: -1, y: 0 },
         { x: 0, y: 0 },
-        { x: 0, y: 1 },
-        { x: 0, y: 2 },
-        { x: -1, y: 2 },
+        { x: 1, y: 0 },
       ],
     },
     O: {
       key: "O",
       color: "yellow",
       blocks: [
+        { x: 0, y: -1 },
         { x: 0, y: 0 },
-        { x: 0, y: 1 },
+        { x: 1, y: -1 },
         { x: 1, y: 0 },
-        { x: 1, y: 1 },
       ],
     },
     I: {
       key: "I",
       color: "lightblue",
       blocks: [
+        { x: -1, y: 0 },
         { x: 0, y: 0 },
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 3, y: 0 },
       ],
     },
     S: {
       key: "S",
       color: "green",
       blocks: [
+        { x: -1, y: 0 },
         { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 1, y: 1 },
-        { x: 2, y: 1 },
+        { x: 0, y: -1 },
+        { x: 1, y: -1 },
       ],
     },
     Z: {
       key: "Z",
       color: "pink",
       blocks: [
+        { x: -1, y: -1 },
+        { x: 0, y: -1 },
         { x: 0, y: 0 },
         { x: 1, y: 0 },
-        { x: 1, y: 1 },
-        { x: 2, y: 1 },
       ],
     },
   };
@@ -89,7 +90,6 @@
   tetromino = { ...randomTetromino() };
 
   tetrominoState.set(tetromino);
-  console.log(tetromino);
 
   positionState.subscribe((newPosition) => {
     position = newPosition;
@@ -99,7 +99,7 @@
     if (newTetromino) {
       tetromino = newTetromino;
     } else {
-      positionState.set({ x: 4, y: 0 });
+      positionState.set({ x: 4, y: 1 });
       tetromino = { ...randomTetromino() };
       tetrominoState.set(tetromino);
     }

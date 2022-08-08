@@ -5,5 +5,5 @@ export const tetrominoState = writable({});
 
 export const positionState = writable({
   x: 4,
-  y: 0,
+  y: 1,
 });
