@@ -117,6 +117,7 @@
   }
 
   function clearLines() {
+    const newCells = [];
     const fullRows = cells.reduce((rows, row, i) => {
       if (row.every((cell) => cell.occupied)) {
         rows.push(i);
@@ -124,8 +125,8 @@
       return rows;
     }, []);
     if (fullRows.length > 0) {
-      console.log(fullRows);
       cells = cells.map((row, i) => {
+        // clears lines
         if (fullRows.includes(i)) {
           return Array(width)
             .fill()
@@ -139,21 +140,22 @@
         }
       });
 
-      fullRows.forEach((row) => cells.splice(row, 1));
-      cells = [
-        ...cells,
-        ...Array(fullRows.length)
-          .fill()
-          .map((_, i) =>
-            Array(width)
-              .fill()
-              .map((_, j) => ({
-                x: j,
-                y: height + i,
-                occupied: false,
+      fullRows.forEach((fullRow) => {
+        const newCells = [
+          ...cells
+            .filter((_, i) => i <= fullRow)
+            .map((aboveRow, j) =>
+              aboveRow.map((cell) => ({
+                ...cell,
+                occupied:
+                  cell.y > 0 ? cells[cell.y - 1][cell.x].occupied : false,
+                color: cell.y > 0 ? cells[cell.y - 1][cell.x].color : "",
               }))
-          ),
-      ];
+            ),
+          ...cells.filter((_, i) => i > fullRow),
+        ];
+        cells = newCells;
+      });
     }
   }
 
