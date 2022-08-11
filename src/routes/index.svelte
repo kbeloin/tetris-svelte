@@ -1,8 +1,8 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
   import { tetrominoState, positionState } from "../stores";
-  import { levels } from "../logic";
-  const START_LEVEL = 0;
+  import { levels, speed } from "../logic";
+  const START_LEVEL = 5;
   const START_LINES = 0;
 
   let lines = START_LINES;
@@ -11,6 +11,7 @@
     paused: false,
     over: false,
   };
+  let currentSpeed = speed[START_LEVEL];
   let level = START_LEVEL;
   let width = 10;
   let height = 20;
@@ -60,7 +61,20 @@
     return outOfBounds || collision;
   }
 
+  function fastDrop() {
+    while (!checkCollision(tetromino, position, { dy: 1, dx: 0 })) {
+      positionState.update((position) => ({
+        ...position,
+        y: position.y + 1,
+      }));
+    }
+    updateBlock();
+  }
+
   function handleKeydown(event) {
+    if (event.key === "ArrowUp") {
+      fastDrop();
+    }
     if (event.key === "ArrowLeft") {
       const collides = checkCollision(tetromino, position, { dx: -1, dy: 0 });
       !collides &&
@@ -90,6 +104,7 @@
   }
 
   function handleRotate({ rx, ry }) {
+    if (tetromino.key === "O") return;
     const newBlocks = tetromino.blocks.map((block, i) => {
       return {
         ...block,
@@ -206,11 +221,12 @@
 
   function gameTime(node) {
     if (game.started) {
+      const s = currentSpeed * 10;
       setTimeout(() => {
         requestAnimationFrame(updateBlock);
         requestAnimationFrame(clearLines);
         requestAnimationFrame(gameTime);
-      }, 100);
+      }, s);
     }
     return {
       destroy() {
@@ -254,6 +270,7 @@
   $: {
     occupiedCells = cells.flatMap((row) => row.filter((cell) => cell.occupied));
     level = levels(level, lines);
+    currentSpeed = speed(level);
   }
 </script>
 
