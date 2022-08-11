@@ -7,3 +7,8 @@ export const positionState = writable({
   x: 4,
   y: 1,
 });
+
+export const gameState = writable({
+  gameOver: false,
+  gameStarted: false,
+});

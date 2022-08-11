@@ -4,6 +4,7 @@
 
   let tetromino;
   let position;
+  let bag;
 
   const tetrominos = {
     T: {
@@ -100,11 +101,14 @@
     if (newTetromino) {
       tetromino = newTetromino;
     } else {
-      positionState.set({ x: 4, y: 1 });
+      positionState.set({ x: 4, y: 0 });
       tetromino = { ...randomTetromino() };
       tetrominoState.set(tetromino);
     }
   });
+
+  $: {
+  }
 </script>
 
 {#each tetromino.blocks as block}

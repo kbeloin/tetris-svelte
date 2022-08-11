@@ -1,8 +1,12 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
-  import { tetrominoState, positionState } from "../stores";
-
-  let time = 0;
+  import { tetrominoState, positionState, gameState } from "../stores";
+  let lines = 0;
+  let game = {
+    started: false,
+    paused: false,
+    over: false,
+  };
   let width = 10;
   let height = 20;
   let size = 20;
@@ -117,7 +121,6 @@
   }
 
   function clearLines() {
-    const newCells = [];
     const fullRows = cells.reduce((rows, row, i) => {
       if (row.every((cell) => cell.occupied)) {
         rows.push(i);
@@ -156,18 +159,34 @@
         ];
         cells = newCells;
       });
+      lines += fullRows.length;
     }
   }
 
   function lockPlacement() {
     const { blocks } = tetromino;
     const { x, y } = position;
-    blocks.forEach((block) => {
-      cells[block.y + y][block.x + x].occupied = true;
-      cells[block.y + y][block.x + x].color = tetromino.color;
-    });
 
-    tetrominoState.set(null);
+    if (y === 0) {
+      game = {
+        ...game,
+        over: true,
+        started: false,
+      };
+
+      tetrominoState.set(null);
+      return;
+    } else {
+      blocks.forEach((block) => {
+        cells[block.y + y][block.x + x].occupied = true;
+        cells[block.y + y][block.x + x].color = tetromino.color;
+      });
+
+      tetrominoState.set(null);
+    }
+  }
+  function cleanup() {
+    lines = 0;
   }
 
   function updateBlock() {
@@ -181,15 +200,42 @@
   }
 
   function gameTime(node) {
-    setInterval(() => {
-      time++;
-      requestAnimationFrame(updateBlock);
-      requestAnimationFrame(clearLines);
-    }, 500);
+    if (game.started) {
+      setTimeout(() => {
+        requestAnimationFrame(updateBlock);
+        requestAnimationFrame(clearLines);
+        requestAnimationFrame(gameTime);
+      }, 100);
+    }
+    return {
+      destroy() {
+        clearTimeout(node);
+      },
+    };
   }
 
   function move(event) {
     requestAnimationFrame(() => handleKeydown(event));
+  }
+
+  function start(event) {
+    cells = Array(height)
+      .fill()
+      .map((_, i) =>
+        Array(width)
+          .fill()
+          .map((_, j) => ({
+            x: j,
+            y: i,
+            occupied: false,
+          }))
+      );
+    game = {
+      ...game,
+      started: true,
+      over: false,
+    };
+    cleanup();
   }
 
   tetrominoState.subscribe((newTetromino) => {
@@ -207,18 +253,33 @@
 
 <svelte:window on:keydown={move} />
 
-<div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
-  <Tetromino />
-  {#each occupiedCells as cell}
-    <div
-      class="cell"
-      style="
+<div class="game-container">
+  {#if game.started}
+    <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
+      <div class="lines">{lines}</div>
+      <Tetromino />
+      {#each occupiedCells as cell}
+        <div
+          class="cell"
+          style="
       --x: {cell.x + 1};
       --y: {cell.y + 1};
       --color: {cell.color};
     "
-    />
-  {/each}
+        />
+      {/each}
+    </div>
+  {:else if game.over}
+    <div class="game-over">
+      <h1>Game Over</h1>
+      <button on:click={start}>Restart</button>
+    </div>
+  {:else}
+    <div class="game-start">
+      <h1>Tetris</h1>
+      <button on:click={start}>Start</button>
+    </div>
+  {/if}
 </div>
 
 <style>
