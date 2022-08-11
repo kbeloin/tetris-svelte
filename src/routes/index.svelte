@@ -1,12 +1,15 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
   import { tetrominoState, positionState } from "../stores";
+  import { levels } from "../logic";
+
   let lines = 0;
   let game = {
     started: false,
     paused: false,
     over: false,
   };
+  let level = 0;
   let width = 10;
   let height = 20;
   let size = 20;
@@ -248,6 +251,7 @@
 
   $: {
     occupiedCells = cells.flatMap((row) => row.filter((cell) => cell.occupied));
+    // level = levels(level, lines);
   }
 </script>
 
@@ -255,8 +259,9 @@
 
 <div class="game-container">
   {#if game.started}
+    <div class="lines">{lines}</div>
+    <div class="level">{level}</div>
     <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
-      <div class="lines">{lines}</div>
       <Tetromino />
       {#each occupiedCells as cell}
         <div
