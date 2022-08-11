@@ -2,14 +2,16 @@
   import Tetromino from "../components/Tetromino.svelte";
   import { tetrominoState, positionState } from "../stores";
   import { levels } from "../logic";
+  const START_LEVEL = 0;
+  const START_LINES = 0;
 
-  let lines = 0;
+  let lines = START_LINES;
   let game = {
     started: false,
     paused: false,
     over: false,
   };
-  let level = 0;
+  let level = START_LEVEL;
   let width = 10;
   let height = 20;
   let size = 20;
@@ -189,7 +191,7 @@
     }
   }
   function cleanup() {
-    lines = 0;
+    lines = START_LINES;
   }
 
   function updateBlock() {
@@ -251,7 +253,7 @@
 
   $: {
     occupiedCells = cells.flatMap((row) => row.filter((cell) => cell.occupied));
-    // level = levels(level, lines);
+    level = levels(level, lines);
   }
 </script>
 
