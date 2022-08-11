@@ -1,6 +1,6 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
-  import { tetrominoState, positionState, gameState } from "../stores";
+  import { tetrominoState, positionState } from "../stores";
   let lines = 0;
   let game = {
     started: false,
