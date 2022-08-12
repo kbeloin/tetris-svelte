@@ -1,12 +1,14 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
+  import Preview from "../components/Preview.svelte";
   import { tetrominoState, positionState } from "../stores";
   import { levels, speed, points } from "../logic";
-  const START_LEVEL = 0;
-  const START_LINES = 0;
+  const START_LEVEL = 4;
+  const START_LINES = 49;
+  const START_SCORE = 0;
 
   let lines = START_LINES;
-  let score = 0;
+  let score = START_SCORE;
   let game = {
     started: false,
     paused: false,
@@ -68,7 +70,9 @@
         ...position,
         y: position.y + 1,
       }));
+      score += 1;
     }
+
     updateBlock();
   }
 
@@ -120,9 +124,12 @@
       { dx: 0, dy: 0 }
     );
     if (!collision) {
-      tetrominoState.update((tetromino) => ({
-        ...tetromino,
-        blocks: newBlocks,
+      tetrominoState.update(({ current, next }) => ({
+        next,
+        current: {
+          ...current,
+          blocks: newBlocks,
+        },
       }));
     }
   }
@@ -199,7 +206,10 @@
         started: false,
       };
 
-      tetrominoState.set(null);
+      tetrominoState.set({
+        current: null,
+        next: $tetrominoState.next,
+      });
       return;
     } else {
       blocks.forEach((block) => {
@@ -207,11 +217,16 @@
         cells[block.y + y][block.x + x].color = tetromino.color;
       });
 
-      tetrominoState.set(null);
+      tetrominoState.set({
+        current: null,
+        next: $tetrominoState.next,
+      });
     }
   }
   function cleanup() {
     lines = START_LINES;
+    score = START_SCORE;
+    level = START_LEVEL;
   }
 
   function updateBlock() {
@@ -224,8 +239,8 @@
       : lockPlacement();
   }
 
-  function gameTime(node) {
-    if (game.started) {
+  function gameTime() {
+    if (game.started && !game.paused) {
       const s = currentSpeed * 10;
       setTimeout(() => {
         requestAnimationFrame(updateBlock);
@@ -235,13 +250,21 @@
     }
     return {
       destroy() {
-        clearTimeout(node);
+        clearTimeout();
       },
     };
   }
 
   function move(event) {
     requestAnimationFrame(() => handleKeydown(event));
+  }
+
+  function pause() {
+    game = {
+      ...game,
+      paused: !game.paused,
+    };
+    !game.paused && gameTime();
   }
 
   function start(event) {
@@ -264,8 +287,11 @@
     cleanup();
   }
 
-  tetrominoState.subscribe((newTetromino) => {
-    tetromino = newTetromino;
+  tetrominoState.subscribe((state) => {
+    console.log(state);
+    let { current, next } = state;
+
+    tetromino = current;
   });
 
   positionState.subscribe((newPosition) => {
@@ -283,21 +309,31 @@
 
 <div class="game-container">
   {#if game.started}
-    <div class="lines">{lines}</div>
-    <div class="level">{level}</div>
-    <div class="score">{score}</div>
-    <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
-      <Tetromino />
-      {#each occupiedCells as cell}
-        <div
-          class="cell"
-          style="
+    <div class="stats-container">
+      <div class="lines">{lines}</div>
+      <div class="level">{level}</div>
+      <div class="score">{score}</div>
+      <button on:click={pause}>{game.paused ? "Resume" : "Pause"}</button>
+    </div>
+    <div class="board-container">
+      <div
+        class="board"
+        use:gameTime
+        use:cssVariables={{ width, height, size }}
+      >
+        <Tetromino />
+        {#each occupiedCells as cell}
+          <div
+            class="cell"
+            style="
       --x: {cell.x + 1};
       --y: {cell.y + 1};
       --color: {cell.color};
     "
-        />
-      {/each}
+          />
+        {/each}
+      </div>
+      <Preview />
     </div>
   {:else if game.over}
     <div class="game-over">
@@ -313,6 +349,14 @@
 </div>
 
 <style>
+  .board-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    gap: 1rem;
+  }
   .board {
     --board-width: calc(var(--width) * var(--size) * 1px);
     --board-height: calc(var(--height) * var(--size) * 1px);
@@ -320,7 +364,7 @@
     height: var(--board-height);
     min-width: var(--board-width);
     min-height: var(--board-height);
-    margin: auto;
+
     display: grid;
     border: 1px solid black;
     position: relative;
@@ -334,5 +378,10 @@
     background-color: var(--color);
     opacity: 0.8;
     outline: 0.5px solid black;
+  }
+
+  :global(*, :root) {
+    box-sizing: border-box;
+    margin: 0;
   }
 </style>

@@ -5,6 +5,7 @@
 
   let tetromino;
   let position;
+  let nextTetromino;
 
   function randomTetromino() {
     const tetrominoTypes = Object.keys(tetrominos);
@@ -15,20 +16,25 @@
   }
 
   tetromino = { ...randomTetromino() };
+  nextTetromino = { ...randomTetromino() };
 
-  tetrominoState.set(tetromino);
+  tetrominoState.set({ current: tetromino, next: nextTetromino });
 
   positionState.subscribe((newPosition) => {
     position = newPosition;
   });
 
-  tetrominoState.subscribe((newTetromino) => {
-    if (newTetromino) {
-      tetromino = newTetromino;
+  tetrominoState.subscribe((state) => {
+    let { current, next } = $tetrominoState;
+    if (current) {
+      tetromino = current;
     } else {
       positionState.set({ x: 4, y: 0 });
-      tetromino = { ...randomTetromino() };
-      tetrominoState.set(tetromino);
+      nextTetromino = { ...randomTetromino() };
+      tetrominoState.set({
+        current: next,
+        next: nextTetromino,
+      });
     }
   });
 
