@@ -1,11 +1,12 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
   import { tetrominoState, positionState } from "../stores";
-  import { levels, speed } from "../logic";
-  const START_LEVEL = 5;
+  import { levels, speed, points } from "../logic";
+  const START_LEVEL = 0;
   const START_LINES = 0;
 
   let lines = START_LINES;
+  let score = 0;
   let game = {
     started: false,
     paused: false,
@@ -104,6 +105,7 @@
   }
 
   function handleRotate({ rx, ry }) {
+    // Unsure how to handle rotation when tetromino does not rotate on a point whose center is on the grid(row, column)
     if (tetromino.key === "O") return;
     const newBlocks = tetromino.blocks.map((block, i) => {
       return {
@@ -141,6 +143,7 @@
   }
 
   function clearLines() {
+    // Get all lines where every cell is occupied
     const fullRows = cells.reduce((rows, row, i) => {
       if (row.every((cell) => cell.occupied)) {
         rows.push(i);
@@ -162,7 +165,7 @@
           return row;
         }
       });
-
+      //   look for every row above (y < i) and move down
       fullRows.forEach((fullRow) => {
         const newCells = [
           ...cells
@@ -180,6 +183,8 @@
         cells = newCells;
       });
       lines += fullRows.length;
+      //   increment score by number of lines cleared
+      score += points(level, fullRows.length);
     }
   }
 
@@ -280,6 +285,7 @@
   {#if game.started}
     <div class="lines">{lines}</div>
     <div class="level">{level}</div>
+    <div class="score">{score}</div>
     <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
       <Tetromino />
       {#each occupiedCells as cell}

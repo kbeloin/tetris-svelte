@@ -5,7 +5,6 @@
 
   let tetromino;
   let position;
-  let bag;
 
   function randomTetromino() {
     const tetrominoTypes = Object.keys(tetrominos);
@@ -42,7 +41,7 @@
     class="cell"
     style="
       --x: {position.x + block.x + 1};
-      --y: {position.y + block.y + 1};
+      --y: {position.y + block.y + 1 <= 0 ? -1 : position.y + block.y + 1};
       --color: {tetromino.color};
       --key: {tetromino.key};
     "

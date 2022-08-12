@@ -141,3 +141,22 @@ export const tetrominos = {
     ],
   },
 };
+
+export const points = (level, lines) => {
+  const modifier = () => {
+    switch (lines) {
+      case 1:
+        return 40;
+      case 2:
+        return 100;
+      case 3:
+        return 300;
+      case 4:
+        return 1200;
+      default:
+        return 0;
+    }
+  };
+
+  return modifier() * (level + 1);
+};
