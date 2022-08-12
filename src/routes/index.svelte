@@ -2,10 +2,14 @@
   import Tetromino from "../components/Tetromino.svelte";
   import Preview from "../components/Preview.svelte";
   import { tetrominoState, positionState } from "../stores";
-  import { levels, speed, points } from "../logic";
-  const START_LEVEL = 4;
-  const START_LINES = 49;
+  import { levels, speed, points, fx, music } from "../logic";
+  const START_LEVEL = 0;
+  const START_LINES = 0;
   const START_SCORE = 0;
+
+  let track;
+
+  let muted = false;
 
   let lines = START_LINES;
   let score = START_SCORE;
@@ -33,6 +37,12 @@
   let occupiedCells;
   let tetromino;
   let position;
+
+  function playAudio(callback, audio) {
+    if (!muted) {
+      return callback(audio);
+    }
+  }
 
   function checkCollision(tetromino, position, { dx, dy }) {
     if (tetromino === null) return false;
@@ -72,15 +82,17 @@
       }));
       score += 1;
     }
-
     updateBlock();
   }
 
   function handleKeydown(event) {
-    if (event.key === "ArrowUp") {
+    if (event.key === " ") {
+      pause();
+    } else if (event.key === "ArrowUp") {
       fastDrop();
     }
     if (event.key === "ArrowLeft") {
+      playAudio(fx, "move");
       const collides = checkCollision(tetromino, position, { dx: -1, dy: 0 });
       !collides &&
         positionState.update((position) => ({
@@ -88,6 +100,7 @@
           x: position.x - 1,
         }));
     } else if (event.key === "ArrowRight") {
+      playAudio(fx, "move");
       const collides = checkCollision(tetromino, position, { dx: 1, dy: 0 });
       !collides &&
         positionState.update((position) => ({
@@ -95,6 +108,7 @@
           x: position.x + 1,
         }));
     } else if (event.key === "ArrowDown") {
+      playAudio(fx, "move");
       const collides = checkCollision(tetromino, position, { dy: 1, dx: 0 });
       !collides &&
         positionState.update((position) => ({
@@ -109,6 +123,7 @@
   }
 
   function handleRotate({ rx, ry }) {
+    playAudio(fx, "rotate");
     // Unsure how to handle rotation when tetromino does not rotate on a point whose center is on the grid(row, column)
     if (tetromino.key === "O") return;
     const newBlocks = tetromino.blocks.map((block, i) => {
@@ -221,9 +236,14 @@
         current: null,
         next: $tetrominoState.next,
       });
+      playAudio(fx, "collision");
     }
   }
   function cleanup() {
+    if (track) {
+      track.pause();
+      track = null;
+    }
     lines = START_LINES;
     score = START_SCORE;
     level = START_LEVEL;
@@ -242,6 +262,9 @@
   function gameTime() {
     if (game.started && !game.paused) {
       const s = currentSpeed * 10;
+      if (track && track.paused) {
+        track.play();
+      }
       setTimeout(() => {
         requestAnimationFrame(updateBlock);
         requestAnimationFrame(clearLines);
@@ -259,11 +282,25 @@
     requestAnimationFrame(() => handleKeydown(event));
   }
 
+  function mute() {
+    muted = !muted;
+    if (muted) {
+      track.pause();
+      track = null;
+    } else {
+      track = playAudio(music, "track1");
+      !game.paused && track.play();
+    }
+  }
+
   function pause() {
     game = {
       ...game,
       paused: !game.paused,
     };
+    if (track) {
+      track.pause();
+    }
     !game.paused && gameTime();
   }
 
@@ -285,12 +322,12 @@
       over: false,
     };
     cleanup();
+    track = playAudio(music, "track1");
+    track && track.play();
   }
 
   tetrominoState.subscribe((state) => {
-    console.log(state);
     let { current, next } = state;
-
     tetromino = current;
   });
 
@@ -314,6 +351,7 @@
       <div class="level">{level}</div>
       <div class="score">{score}</div>
       <button on:click={pause}>{game.paused ? "Resume" : "Pause"}</button>
+      <button on:click={mute}>{muted ? "Unmute" : "Mute"}</button>
     </div>
     <div class="board-container">
       <div

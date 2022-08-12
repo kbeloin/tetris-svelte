@@ -1,5 +1,12 @@
+let track;
+
 export const levels = (level, lines) => {
-  return lines >= (level + 1) * 10 ? level + 1 : level;
+  return lines >= (level + 1) * 10
+    ? (() => {
+        fx("levelup");
+        return level + 1;
+      })()
+    : level;
 };
 
 export const speed = (level) => {
@@ -99,7 +106,6 @@ export const tetrominos = {
       { x: 1, y: 0 },
     ],
   },
-  // TODO: Fix O rotation
   O: {
     key: "O",
     color: "yellow",
@@ -146,12 +152,16 @@ export const points = (level, lines) => {
   const modifier = () => {
     switch (lines) {
       case 1:
+        fx("lineclear");
         return 40;
       case 2:
+        fx("lineclear");
         return 100;
       case 3:
+        fx("lineclear");
         return 300;
       case 4:
+        fx("tetris");
         return 1200;
       default:
         return 0;
@@ -159,4 +169,27 @@ export const points = (level, lines) => {
   };
 
   return modifier() * (level + 1);
+};
+
+export const fx = (key) => {
+  let sound;
+  requestAnimationFrame(() => {
+    sound = new Audio(`../src/assets/sounds/${key}.mp3`);
+    sound.addEventListener("canplaythrough", () => {
+      sound.play();
+    });
+    sound.addEventListener("ended", () => {
+      sound = null;
+    });
+  });
+};
+
+export const music = (key) => {
+  track = new Audio(`../src/assets/sounds/${key}.mp3`);
+  track.addEventListener("canplaythrough", () => {}),
+    track.addEventListener("ended", () => {
+      track = null;
+    }),
+    (track.loop = true);
+  return track;
 };
