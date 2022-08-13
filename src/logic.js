@@ -174,7 +174,7 @@ export const points = (level, lines) => {
 export const fx = (key) => {
   let sound;
   requestAnimationFrame(() => {
-    sound = new Audio(`../src/assets/sounds/${key}.mp3`);
+    sound = new Audio(`./audio/${key}.mp3`);
     sound.addEventListener("canplaythrough", () => {
       sound.play();
     });
@@ -185,7 +185,7 @@ export const fx = (key) => {
 };
 
 export const music = (key) => {
-  track = new Audio(`../src/assets/sounds/${key}.mp3`);
+  track = new Audio(`./audio/${key}.mp3`);
   track.addEventListener("canplaythrough", () => {}),
     track.addEventListener("ended", () => {
       track = null;
