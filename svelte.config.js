@@ -11,7 +11,6 @@ const config = {
       fallback: null,
       precompress: false,
     }),
-    outDir: "build",
 
     prerender: {
       // This can be false if you're using a fallback (i.e. SPA mode)
