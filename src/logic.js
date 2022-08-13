@@ -1,9 +1,10 @@
 let track;
+let muted = true;
 
 export const levels = (level, lines) => {
   return lines >= (level + 1) * 10
     ? (() => {
-        fx("levelup");
+        !muted && fx("levelup");
         return level + 1;
       })()
     : level;
@@ -152,16 +153,16 @@ export const points = (level, lines) => {
   const modifier = () => {
     switch (lines) {
       case 1:
-        fx("lineclear");
+        !muted && fx("lineclear");
         return 40;
       case 2:
-        fx("lineclear");
+        !muted && fx("lineclear");
         return 100;
       case 3:
-        fx("lineclear");
+        !muted && fx("lineclear");
         return 300;
       case 4:
-        fx("tetris");
+        !muted && fx("tetris");
         return 1200;
       default:
         return 0;
@@ -192,4 +193,12 @@ export const music = (key) => {
     }),
     (track.loop = true);
   return track;
+};
+
+export const mute = () => {
+  if (muted) {
+    muted = false;
+  } else {
+    muted = true;
+  }
 };

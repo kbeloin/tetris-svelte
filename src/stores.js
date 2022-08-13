@@ -7,3 +7,5 @@ export const positionState = writable({
   x: 4,
   y: 1,
 });
+
+export const highScoreState = writable(0);

@@ -1,15 +1,17 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
   import Preview from "../components/Preview.svelte";
-  import { tetrominoState, positionState } from "../stores";
-  import { levels, speed, points, fx, music } from "../logic";
+  import HighScore from "../components/HighScore.svelte";
+
+  import { tetrominoState, positionState, highScoreState } from "../stores";
+  import { levels, speed, points, fx, music, mute } from "../logic";
   const START_LEVEL = 0;
   const START_LINES = 0;
   const START_SCORE = 0;
 
   let track;
 
-  let muted = false;
+  let muted = true;
 
   let lines = START_LINES;
   let score = START_SCORE;
@@ -282,7 +284,8 @@
     requestAnimationFrame(() => handleKeydown(event));
   }
 
-  function mute() {
+  function handleMute() {
+    mute();
     muted = !muted;
     if (muted) {
       track.pause();
@@ -347,11 +350,13 @@
 <div class="game-container">
   {#if game.started}
     <div class="stats-container">
-      <div class="lines">{lines}</div>
-      <div class="level">{level}</div>
-      <div class="score">{score}</div>
+      <div class="lines">Lines: {lines}</div>
+      <div class="level">Level: {level}</div>
+      <HighScore {score} />
+      <div class="score">Score: {score}</div>
+
       <button on:click={pause}>{game.paused ? "Resume" : "Pause"}</button>
-      <button on:click={mute}>{muted ? "Unmute" : "Mute"}</button>
+      <button on:click={handleMute}>{muted ? "Unmute" : "Mute"}</button>
     </div>
     <div class="board-container">
       <div
