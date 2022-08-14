@@ -8,4 +8,6 @@ export const positionState = writable({
   y: 1,
 });
 
+export const cellsState = writable([]);
+
 export const highScoreState = writable(0);

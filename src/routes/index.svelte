@@ -1,28 +1,29 @@
 <script>
   import Tetromino from "../components/Tetromino.svelte";
   import Preview from "../components/Preview.svelte";
-  import HighScore from "../components/HighScore.svelte";
+  import Scores from "../components/Scores.svelte";
   import Header from "../components/Header.svelte";
 
   import { tetrominoState, positionState } from "../stores";
   import { levels, speed, points, fx, music, mute } from "../logic";
-  const START_LEVEL = 0;
-  const START_LINES = 0;
-  const START_SCORE = 0;
+  import { cssVariables } from "../utility";
+
+  let START_LEVEL = 0;
+  let START_LINES = 0;
+  let START_SCORE = 0;
 
   let track;
-
   let muted = true;
 
-  let lines = START_LINES;
-  let score = START_SCORE;
   let game = {
     started: false,
     paused: false,
     over: false,
+    currentSpeed: speed(START_LEVEL),
+    level: START_LEVEL,
+    lines: START_LINES,
   };
-  let currentSpeed = speed[START_LEVEL];
-  let level = START_LEVEL;
+
   let width = 10;
   let height = 20;
   let size = 20;
@@ -37,17 +38,21 @@
           occupied: false,
         }))
     );
+
   let occupiedCells;
   let tetromino;
   let position;
 
   function playAudio(callback, audio) {
+    // controls audio playback
     if (!muted) {
       return callback(audio);
     }
   }
 
-  function checkCollision(tetromino, position, { dx, dy }) {
+  // uses tetromino, position, {dx, dy}
+  function checkCollision(tetromino, p, { dx, dy }) {
+    const position = $positionState;
     if (tetromino === null) return false;
     const { blocks } = tetromino;
     const { x, y } = position;
@@ -59,7 +64,6 @@
     const left = Math.min(...blocks.map((block) => block.x + x));
     const right = Math.max(...blocks.map((block) => block.x + x));
     // Get furthest top and bottom blocks
-    const top = Math.min(...blocks.map((block) => block.y + y));
     const bottom = Math.max(...blocks.map((block) => block.y + y));
 
     const adjacentCells = blocks.map((block, i) => {
@@ -76,8 +80,9 @@
     const collision = adjacentCells.some((cell) => cell);
     return outOfBounds || collision;
   }
-
+  // uses checkCollision, tetromino, position, score, lockPlacement
   function fastDrop() {
+    let score = 0;
     while (!checkCollision(tetromino, position, { dy: 1, dx: 0 })) {
       positionState.update((position) => ({
         ...position,
@@ -85,9 +90,13 @@
       }));
       score += 1;
     }
-    updateBlock();
+    game = {
+      ...game,
+      score: game.score + score,
+    };
+    lockPlacement();
   }
-
+  // uses pause, fastDrop, updateBlock, check collision, playAudio, positionState
   function handleKeydown(event) {
     if (event.key === " ") {
       pause();
@@ -124,23 +133,22 @@
       handleRotate({ rx: 1, ry: -1 });
     }
   }
-
+  // uses tetromino, tetromino state, check collision
   function handleRotate({ rx, ry }) {
     playAudio(fx, "rotate");
     // Unsure how to handle rotation when tetromino does not rotate on a point whose center is on the grid(row, column)
-    if (tetromino.key === "O") return;
-    const newBlocks = tetromino.blocks.map((block, i) => {
+    if ($tetrominoState.current.key === "O") return;
+    const newBlocks = $tetrominoState.current.blocks.map((block, i) => {
       return {
         ...block,
         x: block.y * rx,
         y: block.x * ry,
       };
     });
-    const collision = checkCollision(
-      { blocks: newBlocks, color: tetromino.color },
-      position,
-      { dx: 0, dy: 0 }
-    );
+    const collision = checkCollision({ blocks: newBlocks }, $positionState, {
+      dx: 0,
+      dy: 0,
+    });
     if (!collision) {
       tetrominoState.update(({ current, next }) => ({
         next,
@@ -152,21 +160,7 @@
     }
   }
 
-  function cssVariables(node, variables) {
-    setCssVariables(node, variables);
-    return {
-      update(variables) {
-        setCssVariables(node, variables);
-      },
-    };
-  }
-
-  function setCssVariables(node, variables) {
-    for (const name in variables) {
-      node.style.setProperty(`--${name}`, variables[name]);
-    }
-  }
-
+  // uses cells, lines, score, level
   function clearLines() {
     // Get all lines where every cell is occupied
     const fullRows = cells.reduce((rows, row, i) => {
@@ -207,15 +201,20 @@
         ];
         cells = newCells;
       });
+      game = {
+        ...game,
+        score: game.score + points(game.level, fullRows.length),
+        lines: game.lines + fullRows.length,
+      };
+
       lines += fullRows.length;
       //   increment score by number of lines cleared
-      score += points(level, fullRows.length);
     }
   }
-
+  // Lock placement tetrominoState, positionState, game, cells
   function lockPlacement() {
-    const { blocks } = tetromino;
-    const { x, y } = position;
+    const { blocks } = $tetrominoState.current;
+    const { x, y } = $positionState;
 
     if (y === 0) {
       game = {
@@ -242,17 +241,25 @@
       playAudio(fx, "collision");
     }
   }
+  // uses track, lines, score, level
   function cleanup() {
     if (track) {
       track.pause();
       track = null;
     }
-    lines = START_LINES;
-    score = START_SCORE;
-    level = START_LEVEL;
+
+    game = {
+      ...game,
+      lines: START_LINES,
+      score: START_SCORE,
+      level: START_LEVEL,
+      currentSpeed: speed(START_LEVEL),
+    };
   }
 
+  // uses updateBlock, checkCollision, lockPlacement
   function updateBlock() {
+    // check if tetromino collides, update positionState if not. If it does, lock placement.
     const collides = checkCollision(tetromino, position, { dy: 1, dx: 0 });
     !collides
       ? positionState.update((position) => ({
@@ -264,7 +271,6 @@
 
   function gameTime() {
     if (game.started && !game.paused) {
-      const s = currentSpeed * 10;
       if (track && track.paused) {
         track.play();
       }
@@ -272,7 +278,7 @@
         requestAnimationFrame(updateBlock);
         requestAnimationFrame(clearLines);
         requestAnimationFrame(gameTime);
-      }, s);
+      }, game.currentSpeed * 10);
     }
     return {
       destroy() {
@@ -281,10 +287,7 @@
     };
   }
 
-  function move(event) {
-    requestAnimationFrame(() => handleKeydown(event));
-  }
-
+  // uses game, track
   function handleMute() {
     mute();
     muted = !muted;
@@ -296,7 +299,7 @@
       !game.paused && track.play();
     }
   }
-
+  // uses game, track
   function pause() {
     game = {
       ...game,
@@ -307,7 +310,7 @@
     }
     !game.paused && gameTime();
   }
-
+  // uses cells; game; cleanup
   function start() {
     cells = Array(height)
       .fill()
@@ -331,7 +334,7 @@
   }
 
   tetrominoState.subscribe((state) => {
-    let { current, next } = state;
+    let { current } = state;
     tetromino = current;
   });
 
@@ -341,21 +344,23 @@
 
   $: {
     occupiedCells = cells.flatMap((row) => row.filter((cell) => cell.occupied));
-    level = levels(level, lines);
-    currentSpeed = speed(level);
+    game = {
+      ...game,
+      level: levels(game.level, game.lines),
+      currentSpeed: speed(game.level),
+    };
   }
 </script>
 
-<svelte:window on:keydown={move} />
+<svelte:window on:keydown={(event) => handleKeydown(event)} />
 
 <div class="game-container">
   <Header {game} />
   {#if game.started}
     <div class="stats-container">
-      <div class="lines">Lines: {lines}</div>
-      <div class="level">Level: {level}</div>
-      <HighScore {score} />
-      <div class="score">Score: {score}</div>
+      <div class="lines">Lines: {game.lines}</div>
+      <div class="level">Level: {game.level}</div>
+      <Scores score={game.score} />
 
       <button on:click={pause}>{game.paused ? "Resume" : "Pause"}</button>
       <button on:click={handleMute}>{muted ? "Unmute" : "Mute"}</button>
