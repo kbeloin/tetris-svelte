@@ -2,8 +2,9 @@
   import Tetromino from "../components/Tetromino.svelte";
   import Preview from "../components/Preview.svelte";
   import HighScore from "../components/HighScore.svelte";
+  import Header from "../components/Header.svelte";
 
-  import { tetrominoState, positionState, highScoreState } from "../stores";
+  import { tetrominoState, positionState } from "../stores";
   import { levels, speed, points, fx, music, mute } from "../logic";
   const START_LEVEL = 0;
   const START_LINES = 0;
@@ -307,7 +308,7 @@
     !game.paused && gameTime();
   }
 
-  function start(event) {
+  function start() {
     cells = Array(height)
       .fill()
       .map((_, i) =>
@@ -348,6 +349,7 @@
 <svelte:window on:keydown={move} />
 
 <div class="game-container">
+  <Header {game} />
   {#if game.started}
     <div class="stats-container">
       <div class="lines">Lines: {lines}</div>
@@ -423,8 +425,50 @@
     outline: 0.5px solid black;
   }
 
-  :global(*, :root) {
+  :global(*, :root, ::after, ::before) {
     box-sizing: border-box;
     margin: 0;
+  }
+
+  :global(button) {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    min-width: 150px;
+    border: 1px solid #000;
+  }
+
+  :global(button:hover) {
+    background-color: #f5f5f5;
+  }
+
+  :global(label) {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  :global(input) {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    min-width: 200px;
+    width: 200px;
   }
 </style>
