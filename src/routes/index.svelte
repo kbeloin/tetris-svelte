@@ -4,7 +4,7 @@
   import Scores from "../components/Scores.svelte";
   import Header from "../components/Header.svelte";
 
-  import { tetrominoState, positionState } from "../stores";
+  import { tetrominoState, positionState, cellsState } from "../stores";
   import { levels, speed, points, fx, music, mute } from "../logic";
   import { cssVariables } from "../utility";
 
@@ -27,19 +27,9 @@
   let width = 10;
   let height = 20;
   let size = 20;
-  let cells = Array(height)
-    .fill()
-    .map((_, i) =>
-      Array(width)
-        .fill()
-        .map((_, j) => ({
-          x: j,
-          y: i,
-          occupied: false,
-        }))
-    );
 
   let occupiedCells;
+
   let tetromino;
   let position;
 
@@ -56,9 +46,6 @@
     if (tetromino === null) return false;
     const { blocks } = tetromino;
     const { x, y } = position;
-    const occupiedCells = cells.flatMap((row) =>
-      row.filter((cell) => cell.occupied)
-    );
 
     // Get furthest left and right blocks
     const left = Math.min(...blocks.map((block) => block.x + x));
@@ -163,14 +150,14 @@
   // uses cells, lines, score, level
   function clearLines() {
     // Get all lines where every cell is occupied
-    const fullRows = cells.reduce((rows, row, i) => {
+    const fullRows = $cellsState.reduce((rows, row, i) => {
       if (row.every((cell) => cell.occupied)) {
         rows.push(i);
       }
       return rows;
     }, []);
     if (fullRows.length > 0) {
-      cells = cells.map((row, i) => {
+      let newCells = $cellsState.map((row, i) => {
         // clears lines
         if (fullRows.includes(i)) {
           return Array(width)
@@ -184,30 +171,30 @@
           return row;
         }
       });
+
+      cellsState.update((cells) => newCells);
       //   look for every row above (y < i) and move down
       fullRows.forEach((fullRow) => {
-        const newCells = [
-          ...cells
+        let newCells = [
+          ...$cellsState
             .filter((_, i) => i <= fullRow)
             .map((aboveRow, j) =>
               aboveRow.map((cell) => ({
                 ...cell,
                 occupied:
-                  cell.y > 0 ? cells[cell.y - 1][cell.x].occupied : false,
-                color: cell.y > 0 ? cells[cell.y - 1][cell.x].color : "",
+                  cell.y > 0 ? $cellsState[cell.y - 1][cell.x].occupied : false,
+                color: cell.y > 0 ? $cellsState[cell.y - 1][cell.x].color : "",
               }))
             ),
-          ...cells.filter((_, i) => i > fullRow),
+          ...$cellsState.filter((_, i) => i > fullRow),
         ];
-        cells = newCells;
+        cellsState.update((cells) => newCells);
       });
       game = {
         ...game,
         score: game.score + points(game.level, fullRows.length),
         lines: game.lines + fullRows.length,
       };
-
-      lines += fullRows.length;
       //   increment score by number of lines cleared
     }
   }
@@ -230,8 +217,8 @@
       return;
     } else {
       blocks.forEach((block) => {
-        cells[block.y + y][block.x + x].occupied = true;
-        cells[block.y + y][block.x + x].color = tetromino.color;
+        $cellsState[block.y + y][block.x + x].occupied = true;
+        $cellsState[block.y + y][block.x + x].color = tetromino.color;
       });
 
       tetrominoState.set({
@@ -312,7 +299,7 @@
   }
   // uses cells; game; cleanup
   function start() {
-    cells = Array(height)
+    let newCells = Array(height)
       .fill()
       .map((_, i) =>
         Array(width)
@@ -323,6 +310,8 @@
             occupied: false,
           }))
       );
+    cellsState.update((cells) => newCells);
+
     game = {
       ...game,
       started: true,
@@ -332,6 +321,10 @@
     track = playAudio(music, "track1");
     track && track.play();
   }
+
+  cellsState.subscribe((cells) => {
+    occupiedCells = cells.flatMap((row) => row.filter((cell) => cell.occupied));
+  });
 
   tetrominoState.subscribe((state) => {
     let { current } = state;
@@ -343,7 +336,6 @@
   });
 
   $: {
-    occupiedCells = cells.flatMap((row) => row.filter((cell) => cell.occupied));
     game = {
       ...game,
       level: levels(game.level, game.lines),
