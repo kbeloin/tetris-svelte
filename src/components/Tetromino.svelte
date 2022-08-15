@@ -2,6 +2,7 @@
 <script>
   import { tetrominoState, positionState } from "../stores";
   import { tetrominos } from "../logic";
+  import { onDestroy } from "svelte";
 
   let tetromino;
   let position;
@@ -20,11 +21,11 @@
 
   tetrominoState.set({ current: tetromino, next: nextTetromino });
 
-  positionState.subscribe((newPosition) => {
+  const p = positionState.subscribe((newPosition) => {
     position = newPosition;
   });
 
-  tetrominoState.subscribe((state) => {
+  const t = tetrominoState.subscribe((state) => {
     let { current, next } = $tetrominoState;
     if (current) {
       tetromino = current;
@@ -36,6 +37,11 @@
         next: nextTetromino,
       });
     }
+  });
+
+  onDestroy(() => {
+    p();
+    t();
   });
 </script>
 

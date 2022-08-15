@@ -55,7 +55,7 @@
     } else {
       gameState.update((game) => ({
         ...game,
-        track: !game.track ? playAudio(music, "track1") : game.track,
+        track: playAudio(music, "track1"),
       }));
       $gameState.track.play();
     }
@@ -111,12 +111,10 @@
     <Board />
   {:else if game.over}
     <div class="game-over">
-      <h1>Game Over</h1>
       <button on:click={start}>Restart</button>
     </div>
   {:else}
     <div class="game-start">
-      <h1>Tetris</h1>
       <button on:click={start}>Start</button>
     </div>
   {/if}
@@ -127,8 +125,7 @@
     grid-column-start: var(--x);
     grid-row-start: var(--y);
     background-color: var(--color);
-    opacity: 0.8;
-    outline: 0.5px solid black;
+    border: 0.5px solid black;
   }
 
   :global(*, :root, ::after, ::before) {

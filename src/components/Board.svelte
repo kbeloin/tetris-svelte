@@ -9,6 +9,7 @@
   import { width, height, size, fx, points, levels, speed } from "../logic";
   import Preview from "./Preview.svelte";
   import Tetromino from "./Tetromino.svelte";
+  import { onDestroy } from "svelte";
 
   let tetromino;
   let position;
@@ -193,7 +194,6 @@
         ...game,
         over: true,
         started: false,
-        track: null,
       }));
 
       tetrominoState.set({
@@ -241,6 +241,8 @@
       }, $gameState.currentSpeed * 10);
     }
     if ($gameState.over) {
+      console.log($gameState.track);
+      $gameState.track && $gameState.track.pause();
       clearTimeout();
     }
     return {
@@ -261,17 +263,23 @@
     gameTime: gameTime,
   }));
 
-  tetrominoState.subscribe((state) => {
+  const t = tetrominoState.subscribe((state) => {
     let { current } = state;
     tetromino = current;
   });
 
-  positionState.subscribe((newPosition) => {
+  const p = positionState.subscribe((newPosition) => {
     position = newPosition;
   });
 
-  gameState.subscribe((currentGame) => {
+  const g = gameState.subscribe((currentGame) => {
     game = currentGame;
+  });
+
+  onDestroy(() => {
+    t();
+    p();
+    g();
   });
 </script>
 

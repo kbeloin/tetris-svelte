@@ -1,4 +1,3 @@
-let track;
 let muted = true;
 export const width = 10;
 export const height = 20;
@@ -203,6 +202,7 @@ export const fx = (key) => {
 };
 
 export const music = (key) => {
+  let track;
   track = new Audio(`./audio/${key}.mp3`);
   track.addEventListener("canplaythrough", () => {}),
     track.addEventListener("ended", () => {
