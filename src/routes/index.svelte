@@ -122,7 +122,6 @@
     grid-column-start: var(--x);
     grid-row-start: var(--y);
     background-color: var(--color);
-    border: 0.5px solid black;
   }
 
   :global(*, :root, ::after, ::before) {

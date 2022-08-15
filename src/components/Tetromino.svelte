@@ -51,7 +51,9 @@
     style="
       --x: {position.x + block.x + 1};
       --y: {position.y + block.y + 1 <= 0 ? -1 : position.y + block.y + 1};
-      --color: {tetromino.color};
+      --color: {position.y + block.y + 1 <= 0
+      ? 'transparent'
+      : tetromino.color};
       --key: {tetromino.key};
     "
   />
