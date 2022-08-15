@@ -18,7 +18,13 @@
     {/if}
   </button>
 
-  <button on:click={game.mute}>{game.muted ? "Unmute" : "Mute"}</button>
+  <button on:click={game.mute}>
+    {#if game.muted}
+      {@html icons("muted")}
+    {:else}
+      {@html icons("audio")}
+    {/if}</button
+  >
 </div>
 
 <style>

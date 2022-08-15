@@ -63,38 +63,39 @@
   // uses pause, fastDrop, updateBlock, check collision, playAudio, positionState
   function handleKeydown(event) {
     if (event.key === " ") {
-      $gameState.pause();
-    } else if (event.key === "ArrowUp") {
-      fastDrop();
-    }
-    if (event.key === "ArrowLeft") {
-      $gameState.play(fx, "move");
-      const collides = checkCollision(tetromino, position, { dx: -1, dy: 0 });
-      !collides &&
-        positionState.update((position) => ({
-          ...position,
-          x: position.x - 1,
-        }));
-    } else if (event.key === "ArrowRight") {
-      $gameState.play(fx, "move");
-      const collides = checkCollision(tetromino, position, { dx: 1, dy: 0 });
-      !collides &&
-        positionState.update((position) => ({
-          ...position,
-          x: position.x + 1,
-        }));
-    } else if (event.key === "ArrowDown") {
-      $gameState.play(fx, "move");
-      const collides = checkCollision(tetromino, position, { dy: 1, dx: 0 });
-      !collides &&
-        positionState.update((position) => ({
-          ...position,
-          y: position.y + 1,
-        }));
-    } else if (event.key === "d") {
-      handleRotate({ rx: -1, ry: 1 });
-    } else if (event.key === "a") {
-      handleRotate({ rx: 1, ry: -1 });
+      requestAnimationFrame($gameState.pause);
+    } else if (!$gameState.paused) {
+      if (event.key === "ArrowUp") {
+        fastDrop();
+      } else if (event.key === "ArrowLeft") {
+        $gameState.play(fx, "move");
+        const collides = checkCollision(tetromino, position, { dx: -1, dy: 0 });
+        !collides &&
+          positionState.update((position) => ({
+            ...position,
+            x: position.x - 1,
+          }));
+      } else if (event.key === "ArrowRight") {
+        $gameState.play(fx, "move");
+        const collides = checkCollision(tetromino, position, { dx: 1, dy: 0 });
+        !collides &&
+          positionState.update((position) => ({
+            ...position,
+            x: position.x + 1,
+          }));
+      } else if (event.key === "ArrowDown") {
+        $gameState.play(fx, "move");
+        const collides = checkCollision(tetromino, position, { dy: 1, dx: 0 });
+        !collides &&
+          positionState.update((position) => ({
+            ...position,
+            y: position.y + 1,
+          }));
+      } else if (event.key === "d") {
+        handleRotate({ rx: -1, ry: 1 });
+      } else if (event.key === "a") {
+        handleRotate({ rx: 1, ry: -1 });
+      }
     }
   }
   // uses tetromino, tetromino state, check collision
@@ -231,9 +232,6 @@
 
   function gameTime() {
     if ($gameState.started && !$gameState.paused) {
-      if ($gameState.track && $gameState.track.paused) {
-        $gameState.track.play();
-      }
       setTimeout(() => {
         requestAnimationFrame(updateBlock);
         requestAnimationFrame(clearLines);

@@ -19,13 +19,13 @@
 
 <div class="score-container">
   <div class="high-score">
-    <h3>High Score</h3>
+    <h4>High Score</h4>
     <p>
       <strong>{currentHighScore}</strong>
     </p>
   </div>
   <div class="current-score">
-    <h3>Score</h3>
+    <h4>Score</h4>
     <p>
       <strong>{score}</strong>
     </p>
@@ -47,8 +47,8 @@
     flex-direction: row;
     gap: 1rem;
   }
-  .high-score h3,
-  .current-score h3 {
+  .high-score h4,
+  .current-score h4 {
     margin: 0;
   }
   .high-score p,

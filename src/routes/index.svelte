@@ -1,8 +1,7 @@
 <script>
   import Board from "../components/Board.svelte";
-  import Scores from "../components/Scores.svelte";
   import Header from "../components/Header.svelte";
-  import Controls from "../components/Controls.svelte";
+  import Stats from "../components/Stats.svelte";
 
   import { cellsState, positionState, gameState } from "../stores";
   import { speed, music, mute, newBoard, startingPosition } from "../logic";
@@ -69,12 +68,15 @@
       ...game,
       paused: !game.paused,
     }));
-    $gameState.track
-      ? $gameState.track.paused
-        ? $gameState.track.play()
-        : $gameState.track.pause()
-      : null;
 
+    $gameState.track &&
+      $gameState.paused &&
+      !$gameState.muted &&
+      $gameState.track.pause();
+    $gameState.track &&
+      !$gameState.paused &&
+      !$gameState.muted &&
+      $gameState.track.play();
     !game.paused && game.gameTime();
   }
   // uses cells; game; cleanup
@@ -102,13 +104,7 @@
 <div class="game-container">
   <Header {game} />
   {#if game.started}
-    <div class="stats-container">
-      <div class="lines">Lines: {game.lines}</div>
-      <div class="level">Level: {$gameState.level}</div>
-      <Scores score={game.score} />
-
-      <Controls />
-    </div>
+    <Stats />
     <Board />
   {:else if game.over}
     <div class="game-over">
@@ -175,13 +171,6 @@
     min-width: 200px;
     width: 200px;
   }
-  .stats-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 32px;
-  }
 
   .game-container {
     max-width: 600px;
@@ -191,5 +180,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: "Work Sans", sans-serif;
   }
 </style>
