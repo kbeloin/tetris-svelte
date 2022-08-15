@@ -30,9 +30,9 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     margin: 0 auto;
     padding: 0;
     width: 100%;
-    max-width: 600px;
   }
 </style>

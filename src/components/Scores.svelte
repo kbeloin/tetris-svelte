@@ -31,3 +31,28 @@
     </p>
   </div>
 </div>
+
+<style>
+  .score-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    width: 100%;
+  }
+  .high-score,
+  .current-score {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+  .high-score h3,
+  .current-score h3 {
+    margin: 0;
+  }
+  .high-score p,
+  .current-score p {
+    margin: 0;
+  }
+</style>

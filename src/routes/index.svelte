@@ -2,12 +2,13 @@
   import Board from "../components/Board.svelte";
   import Scores from "../components/Scores.svelte";
   import Header from "../components/Header.svelte";
+  import Controls from "../components/Controls.svelte";
 
   import { cellsState, positionState, gameState } from "../stores";
   import { speed, music, mute, newBoard, startingPosition } from "../logic";
 
   let START_LEVEL = 0;
-  let START_LINES = 9;
+  let START_LINES = 0;
   let START_SCORE = 0;
 
   let muted = true;
@@ -21,13 +22,14 @@
     lines: START_LINES,
     pause: pause,
     start: start,
-    mute: mute,
+    mute: handleMute,
     play: playAudio,
+    muted: muted,
   };
 
   function playAudio(callback, audio) {
     // controls audio playback
-    if (!muted) {
+    if (!game.muted) {
       return callback(audio);
     }
   }
@@ -48,8 +50,8 @@
   // uses game, track
   function handleMute() {
     mute();
-    muted = !muted;
-    if (muted && $gameState.track) {
+    gameState.update((game) => ({ ...game, muted: !game.muted }));
+    if (game.muted && $gameState.track) {
       $gameState.track.pause();
       gameState.update((game) => ({ ...game, track: null }));
     } else {
@@ -57,7 +59,7 @@
         ...game,
         track: playAudio(music, "track1"),
       }));
-      $gameState.track.play();
+      $gameState.track && $gameState.track.play();
     }
   }
 
@@ -105,8 +107,7 @@
       <div class="level">Level: {$gameState.level}</div>
       <Scores score={game.score} />
 
-      <button on:click={pause}>{game.paused ? "Resume" : "Pause"}</button>
-      <button on:click={handleMute}>{muted ? "Unmute" : "Mute"}</button>
+      <Controls />
     </div>
     <Board />
   {:else if game.over}
@@ -173,5 +174,22 @@
     transition: all 0.2s ease-in-out;
     min-width: 200px;
     width: 200px;
+  }
+  .stats-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 32px;
+  }
+
+  .game-container {
+    max-width: 600px;
+  }
+
+  :global(body > div) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 </style>

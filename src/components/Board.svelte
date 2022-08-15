@@ -308,7 +308,6 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    width: 100vw;
     gap: 1rem;
   }
   .board {
