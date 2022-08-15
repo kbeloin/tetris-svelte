@@ -1,5 +1,22 @@
 let track;
 let muted = true;
+export const width = 10;
+export const height = 20;
+export const size = 20;
+export const startingPosition = { x: 4, y: 1 };
+
+export const newBoard = () =>
+  Array(height)
+    .fill()
+    .map((_, i) =>
+      Array(width)
+        .fill()
+        .map((_, j) => ({
+          x: j,
+          y: i,
+          occupied: false,
+        }))
+    );
 
 export const levels = (level, lines) => {
   return lines >= (level + 1) * 10

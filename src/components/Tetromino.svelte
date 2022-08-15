@@ -37,9 +37,6 @@
       });
     }
   });
-
-  $: {
-  }
 </script>
 
 {#each tetromino.blocks as block}
