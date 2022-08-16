@@ -45,6 +45,7 @@
       score: START_SCORE,
       track: null,
       currentSpeed: speed(START_LEVEL),
+      level: START_LEVEL,
     }));
 
     positionState.set({ ...startingPosition });
