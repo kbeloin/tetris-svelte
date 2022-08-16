@@ -56,6 +56,7 @@
       : tetromino.color};
       --key: {tetromino.key};
       --border-color: {position.y + block.y + 1 <= 0 ? 'transparent' : 'black'};
+      --accent-color: {position.y + block.y + 1 <= 0 ? 'transparent' : 'white'};
     "
   />
 {/each}
@@ -67,5 +68,9 @@
     background-color: var(--color);
     box-shadow: inset 1px 1px 1px 1px var(--border-color),
       1px 1px 1px 1px var(--border-color);
+  }
+
+  .cell::before {
+    background-color: var(--accent-color);
   }
 </style>

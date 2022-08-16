@@ -6,6 +6,7 @@
   import Preview from "../components/Preview.svelte";
   import Controls from "../components/Controls.svelte";
   import Dialog from "../components/Dialog.svelte";
+  import Info from "../components/Info.svelte";
   import { cellsState, positionState, gameState } from "../stores";
   import { speed, music, mute, newBoard, startingPosition } from "../logic";
 
@@ -43,6 +44,7 @@
       lines: START_LINES,
       score: START_SCORE,
       track: null,
+      currentSpeed: speed(START_LEVEL),
     }));
 
     positionState.set({ ...startingPosition });
@@ -126,6 +128,7 @@
       <Scores slot="score" score={game.score} />
       <Stats slot="stats" />
       <Preview slot="preview" />
+      <Info slot="controls" />
     </Board>
     {#if game.over}
       <Dialog callback={restart}>
@@ -163,6 +166,7 @@
     background-color: var(--color);
     box-shadow: inset 1px 1px 1px 1px black, 1px 1px 1px 1px black;
     border-radius: 2px;
+    position: relative;
   }
   :global(.cell::before) {
     content: "";
@@ -173,6 +177,22 @@
     border-radius: 35% 10% 50% 10%;
     border: 2px solid transparent;
     opacity: 0.4;
+    margin: 2.5px;
+  }
+
+  :global(.cell::after) {
+    position: absolute;
+    content: "";
+    display: block;
+    width: 8px;
+    height: 8px;
+    top: 25%;
+    left: 25%;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+    border: 2px solid transparent;
+    opacity: 0.4;
+    mix-blend-mode: color;
     margin: 2.5px;
   }
 

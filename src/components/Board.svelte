@@ -302,6 +302,7 @@
     <slot name="score" />
     <slot name="preview" />
     <slot name="stats" />
+    <slot name="controls" />
   </div>
 </div>
 
@@ -329,6 +330,7 @@
 
   .board-main {
     padding: 0.25em;
+    border-radius: 2px;
     box-shadow: inset 1px 1px 1px 1px black, 1px 1px 1px 1px black;
   }
 </style>
