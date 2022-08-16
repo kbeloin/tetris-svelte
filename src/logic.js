@@ -125,7 +125,7 @@ export const tetrominos = {
   },
   O: {
     key: "O",
-    color: "yellow",
+    color: "gold",
     blocks: [
       { x: 0, y: -1 },
       { x: 0, y: 0 },
@@ -155,7 +155,7 @@ export const tetrominos = {
   },
   Z: {
     key: "Z",
-    color: "pink",
+    color: "salmon",
     blocks: [
       { x: -1, y: -1 },
       { x: 0, y: -1 },

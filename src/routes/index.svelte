@@ -6,7 +6,6 @@
   import Preview from "../components/Preview.svelte";
   import Controls from "../components/Controls.svelte";
   import Dialog from "../components/Dialog.svelte";
-  import Menu from "../components/Menu.svelte";
   import { cellsState, positionState, gameState } from "../stores";
   import { speed, music, mute, newBoard, startingPosition } from "../logic";
 
@@ -163,6 +162,18 @@
     grid-row-start: var(--y);
     background-color: var(--color);
     box-shadow: inset 1px 1px 1px 1px black, 1px 1px 1px 1px black;
+    border-radius: 2px;
+  }
+  :global(.cell::before) {
+    content: "";
+    display: block;
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 35% 10% 50% 10%;
+    border: 2px solid transparent;
+    opacity: 0.4;
+    margin: 2.5px;
   }
 
   :global(*, :root, ::after, ::before) {
