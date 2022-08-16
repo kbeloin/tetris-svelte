@@ -19,24 +19,25 @@
 
 <div class="score-container">
   <div class="high-score">
-    <h4>High Score</h4>
-    <p>
-      <strong>{currentHighScore}</strong>
-    </p>
+    <h4>Top:</h4>
+    <div>
+      <span>{currentHighScore}</span>
+    </div>
   </div>
   <div class="current-score">
-    <h4>Score</h4>
-    <p>
-      <strong>{score}</strong>
-    </p>
+    <h4>Score:</h4>
+    <div>
+      <span>{score}</span>
+    </div>
   </div>
 </div>
 
 <style>
   .score-container {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+
     margin-bottom: 1rem;
     gap: 1rem;
     width: 100%;
@@ -50,9 +51,17 @@
   .high-score h4,
   .current-score h4 {
     margin: 0;
+    position: relative;
   }
-  .high-score p,
-  .current-score p {
+  .high-score div,
+  .current-score div {
     margin: 0;
+    float: right;
+    right: 0;
+    position: relative;
+  }
+
+  span {
+    position: absolute;
   }
 </style>

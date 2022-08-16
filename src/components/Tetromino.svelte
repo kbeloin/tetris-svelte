@@ -55,6 +55,7 @@
       ? 'transparent'
       : tetromino.color};
       --key: {tetromino.key};
+      --border-color: {position.y + block.y + 1 <= 0 ? 'transparent' : 'black'};
     "
   />
 {/each}
@@ -64,5 +65,7 @@
     grid-column-start: var(--x);
     grid-row-start: var(--y);
     background-color: var(--color);
+    box-shadow: inset 1px 1px 1px 1px var(--border-color),
+      1px 1px 1px 1px var(--border-color);
   }
 </style>

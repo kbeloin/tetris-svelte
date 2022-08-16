@@ -1,4 +1,5 @@
 <script>
+  import Controls from "./Controls.svelte";
   export let game;
 </script>
 
@@ -34,5 +35,6 @@
     margin: 0 auto;
     padding: 0;
     width: 100%;
+    max-width: calc(350px + 1rem);
   }
 </style>

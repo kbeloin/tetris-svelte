@@ -1,4 +1,5 @@
 <script>
+  import Timer from "./Timer.svelte";
   import { gameState } from "../stores";
   import icons from "../icons";
 
@@ -17,7 +18,7 @@
       {@html icons("pause")}
     {/if}
   </button>
-
+  <Timer />
   <button on:click={game.mute}>
     {#if game.muted}
       {@html icons("muted")}
@@ -34,6 +35,8 @@
     align-items: center;
     padding: 0.5rem;
     width: 100%;
+    max-width: calc(350px + 1rem);
+    margin: auto;
   }
 
   button {

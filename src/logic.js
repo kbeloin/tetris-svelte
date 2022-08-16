@@ -1,7 +1,7 @@
 let muted = true;
 export const width = 10;
 export const height = 20;
-export const size = 20;
+export const size = 25;
 export const startingPosition = { x: 4, y: 1 };
 
 export const newBoard = () =>

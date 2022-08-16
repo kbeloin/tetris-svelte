@@ -7,7 +7,7 @@
   } from "../stores";
   import { cssVariables } from "../utility";
   import { width, height, size, fx, points, levels, speed } from "../logic";
-  import Preview from "./Preview.svelte";
+
   import Tetromino from "./Tetromino.svelte";
   import { onDestroy } from "svelte";
 
@@ -194,7 +194,6 @@
       gameState.update((game) => ({
         ...game,
         over: true,
-        started: false,
       }));
 
       tetrominoState.set({
@@ -231,7 +230,7 @@
   }
 
   function gameTime() {
-    if ($gameState.started && !$gameState.paused) {
+    if ($gameState.started && !$gameState.paused && !$gameState.over) {
       setTimeout(() => {
         requestAnimationFrame(updateBlock);
         requestAnimationFrame(clearLines);
@@ -284,20 +283,26 @@
 <svelte:window on:keydown={(event) => handleKeydown(event)} />
 
 <div class="board-container">
-  <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
-    <Tetromino />
-    {#each occupiedCells as cell}
-      <div
-        class="cell"
-        style="
+  <div class="board-main">
+    <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
+      <Tetromino />
+      {#each occupiedCells as cell}
+        <div
+          class="cell"
+          style="
     --x: {cell.x + 1};
     --y: {cell.y + 1};
     --color: {cell.color};
   "
-      />
-    {/each}
+        />
+      {/each}
+    </div>
   </div>
-  <Preview />
+  <div class="board-right">
+    <slot name="score" />
+    <slot name="preview" />
+    <slot name="stats" />
+  </div>
 </div>
 
 <style>
@@ -317,9 +322,13 @@
     min-height: var(--board-height);
 
     display: grid;
-    border: 1px solid black;
     position: relative;
     grid-template-columns: repeat(calc(var(--width)), calc(var(--size) * 1px));
     grid-template-rows: repeat(calc(var(--height)), calc(var(--size) * 1px));
+  }
+
+  .board-main {
+    padding: 0.25em;
+    box-shadow: inset 1px 1px 1px 1px black, 1px 1px 1px 1px black;
   }
 </style>

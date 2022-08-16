@@ -13,7 +13,7 @@
   });
 </script>
 
-<div class="preview-container">
+<div class="preview-container" style="--size: {20};">
   <div class="preview" style="--grid-width: {blockWidth}">
     {#each preview.blocks as block}
       <div
@@ -34,14 +34,12 @@
     display: grid;
     place-content: center;
     place-items: center;
-    padding: 1rem;
-    border: 1px solid black;
-    width: 80px;
-    height: 80px;
+    width: calc(5 * var(--size) * 1px);
+    height: calc(5 * var(--size) * 1px);
   }
   .preview {
-    --board-width: calc(var(--grid-width) * 20px);
-    --board-height: 60px;
+    --board-width: calc(var(--grid-width) * var(--size) * 1px);
+    --board-height: var(--board-width);
     width: var(--board-width);
     height: var(--board-height);
     min-width: var(--board-width);
@@ -49,7 +47,7 @@
     margin: auto;
     display: grid;
     position: relative;
-    grid-template-columns: repeat(4, 20px);
-    grid-template-rows: repeat(3, 20px);
+    grid-template-columns: repeat(4, calc(var(--size) * 1px));
+    grid-template-rows: repeat(3, calc(var(--size) * 1px));
   }
 </style>
