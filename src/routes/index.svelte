@@ -233,6 +233,13 @@
     position: relative;
   }
 
+  .game-start {
+    margin: auto;
+    height: 50vh;
+    display: grid;
+    place-content: center;
+  }
+
   :global(body > div) {
     font-family: "Work Sans", sans-serif;
   }
