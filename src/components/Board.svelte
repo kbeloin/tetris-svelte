@@ -10,6 +10,7 @@
 
   import Tetromino from "./Tetromino.svelte";
   import { onDestroy } from "svelte";
+  // import Ghost from "./Ghost.svelte";
 
   let tetromino;
   let position;
@@ -235,7 +236,7 @@
         requestAnimationFrame(updateBlock);
         requestAnimationFrame(clearLines);
         requestAnimationFrame(gameTime);
-      }, $gameState.currentSpeed * 10);
+      }, ($gameState.currentSpeed * 1000) / 60);
     }
     if ($gameState.over) {
       console.log($gameState.track);
@@ -286,6 +287,8 @@
   <div class="board-main">
     <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
       <Tetromino />
+      <!-- <Ghost {checkCollision} slot="ghost" /> -->
+      <!-- </Tetromino> -->
       {#each occupiedCells as cell}
         <div
           class="cell"

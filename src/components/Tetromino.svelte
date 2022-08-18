@@ -61,6 +61,7 @@
   />
 {/each}
 
+<!-- <slot name="ghost" tetromino={$tetrominoState.current} /> -->
 <style>
   .cell {
     grid-column-start: var(--x);
