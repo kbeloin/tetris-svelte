@@ -28,12 +28,7 @@
 
 <style>
   .controls-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
+    display: none;
   }
 
   .small {
@@ -56,5 +51,16 @@
     display: inline-grid;
     place-content: center;
     border: 2px solid #000;
+  }
+
+  @media (min-width: 768px) {
+    .controls-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+      margin: 0.5rem 0;
+    }
   }
 </style>

@@ -10,7 +10,7 @@
   });
 </script>
 
-<div class="controls-container">
+<div class="controls-container" order="1">
   <button on:click={game.pause}>
     {#if game.paused}
       {@html icons("play")}

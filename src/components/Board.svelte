@@ -9,6 +9,7 @@
   import { width, height, size, fx, points, levels, speed } from "../logic";
 
   import Tetromino from "./Tetromino.svelte";
+  import MobileControls from "./MobileControls.svelte";
   import { onDestroy } from "svelte";
   // import Ghost from "./Ghost.svelte";
 
@@ -308,6 +309,7 @@
     <slot name="controls" />
   </div>
 </div>
+<MobileControls />
 
 <style>
   .board-container {
@@ -335,5 +337,11 @@
     padding: 0.25em;
     border-radius: 2px;
     box-shadow: inset 1px 1px 1px 1px black, 1px 1px 1px 1px black;
+  }
+
+  @media (max-width: 600px) {
+    .board-container {
+      transform: scale(0.8);
+    }
   }
 </style>

@@ -1,5 +1,4 @@
 <script>
-  import Controls from "./Controls.svelte";
   export let game;
 </script>
 
