@@ -202,7 +202,7 @@
     pointer-events: all;
   }
 
-  @media (min-width: 600px) {
+  @media (min-width: 800px) {
     .mobile-controls {
       margin-top: 0;
       display: none;
