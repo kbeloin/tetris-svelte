@@ -2,6 +2,4 @@
 
 ## Preview available at: https://tetris-svelte.onrender.com
 
-## TODO: Add mobile controls
-
-## Allow change of level at setup
+## Allow change of level at setup and other form based game setup.
