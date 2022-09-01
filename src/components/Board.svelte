@@ -193,6 +193,7 @@
     const { x, y } = $positionState;
 
     if (y === 0) {
+      $gameState.play(fx, "gameover");
       gameState.update((game) => ({
         ...game,
         over: true,
@@ -240,7 +241,6 @@
       }, ($gameState.currentSpeed * 1000) / 60);
     }
     if ($gameState.over) {
-      console.log($gameState.track);
       $gameState.track && $gameState.track.pause();
       clearTimeout();
     }
