@@ -337,6 +337,7 @@
     padding: 0.25em;
     border-radius: 2px;
     box-shadow: inset 1px 1px 1px 1px black, 1px 1px 1px 1px black;
+    background-color: black;
   }
 
   @media (max-width: 600px) {
