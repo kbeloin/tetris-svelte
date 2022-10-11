@@ -169,7 +169,7 @@
     border-radius: 2px;
     position: relative;
   }
-  :global(.cell::before) {
+  :global(.cell:not(.ghost)::before) {
     content: "";
     display: block;
     width: 8px;
@@ -181,7 +181,7 @@
     margin: 2.5px;
   }
 
-  :global(.cell::after) {
+  :global(.cell:not(.ghost)::after) {
     position: absolute;
     content: "";
     display: block;

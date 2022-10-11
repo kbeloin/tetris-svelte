@@ -11,7 +11,7 @@
   import Tetromino from "./Tetromino.svelte";
   import MobileControls from "./MobileControls.svelte";
   import { onDestroy } from "svelte";
-  // import Ghost from "./Ghost.svelte";
+  import Ghost from "./Ghost.svelte";
 
   let tetromino;
   let position;
@@ -22,7 +22,7 @@
   function checkCollision(tetromino, p, { dx, dy }) {
     if (tetromino === null) return false;
     const { blocks } = tetromino;
-    const { x, y } = $positionState;
+    const { x, y } = p;
 
     // Get furthest left and right blocks
     const left = Math.min(...blocks.map((block) => block.x + x));
@@ -123,6 +123,11 @@
           ...current,
           blocks: newBlocks,
         },
+      }));
+      positionState.update((position) => ({
+        ...position,
+        x: position.x,
+        y: position.y,
       }));
     }
   }
@@ -288,7 +293,7 @@
   <div class="board-main">
     <div class="board" use:gameTime use:cssVariables={{ width, height, size }}>
       <Tetromino />
-      <!-- <Ghost {checkCollision} slot="ghost" /> -->
+      <Ghost {checkCollision} slot="ghost" />
       <!-- </Tetromino> -->
       {#each occupiedCells as cell}
         <div

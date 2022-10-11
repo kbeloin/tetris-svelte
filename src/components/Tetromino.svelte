@@ -71,7 +71,7 @@
       1px 1px 1px 1px var(--border-color);
   }
 
-  .cell::before {
+  .cell:not(.ghost)::before {
     background-color: var(--accent-color);
   }
 </style>

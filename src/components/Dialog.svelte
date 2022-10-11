@@ -20,6 +20,7 @@
     position: absolute;
     top: 40%;
     left: 30%;
+    z-index: 10;
   }
 
   @keyframes fade-in-and-slide-down {
