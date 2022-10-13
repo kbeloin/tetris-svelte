@@ -2,6 +2,7 @@
   import Timer from "./Timer.svelte";
   import { gameState } from "../stores";
   import icons from "../icons";
+  //  Todo: add a reset button
 
   let game;
 
